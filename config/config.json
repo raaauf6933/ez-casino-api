@@ -1,9 +1,10 @@
 {
   "development": {
     "username": "root",
-    "password": null,
-    "database": "ez_casino_db_dev",
-    "host": "127.0.0.1",
+    "password": "ezcasino",
+    "database": "ez-casino-db",
+    "host": "ez-casino-db.ctthhhmytmfv.ap-southeast-1.rds.amazonaws.com",
+    "port": 3306,
     "dialect": "mysql"
   },
   "test": {
