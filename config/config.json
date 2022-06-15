@@ -8,7 +8,7 @@
   },
   "test": {
     "username": "root",
-    "password": "ez-casino",
+    "password": "ezcasino",
     "database": "ez-casino-db",
     "host": "ez-casino-db.ctthhhmytmfv.ap-southeast-1.rds.amazonaws.com",
     "dialect": "mysql"
