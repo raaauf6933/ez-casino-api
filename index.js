@@ -12,8 +12,10 @@ app.use(
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-app.get("/", (req, res) => {
-  res.send("Hello!");
+app.get("/", (_req, res) => {
+  res.send({
+    status: "success",
+  });
 });
 
 app.use("/users", require("./src/routes/Users"));
