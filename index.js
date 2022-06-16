@@ -12,6 +12,10 @@ app.use(
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
+app.get("/", (req, res) => {
+  res.send("Hello!");
+});
+
 app.use("/users", require("./src/routes/Users"));
 app.use("/auth", require("./src/routes/Authentication"));
 
