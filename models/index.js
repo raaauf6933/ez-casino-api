@@ -15,6 +15,15 @@ let sequelize = new Sequelize(
   config
 );
 
+sequelize
+  .authenticate()
+  .then(function (err) {
+    console.log("Connection has been established successfully.");
+  })
+  .catch(function (err) {
+    console.log("Unable to connect to the database:", err);
+  });
+
 const db = {};
 
 fs.readdirSync(__dirname)
@@ -41,6 +50,10 @@ db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
 db.users = require("./users")(sequelize, Sequelize.DataTypes);
+db.club = require("./club")(sequelize, Sequelize.DataTypes);
+db.agent = require("./agent")(sequelize, Sequelize.DataTypes);
+db.payOutBatch = require("./payout_batch")(sequelize, Sequelize.DataTypes);
+db.agentPayout = require("./agent_payout")(sequelize, Sequelize.DataTypes);
 
 db.sequelize.sync({ force: false });
 

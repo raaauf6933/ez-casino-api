@@ -1,5 +1,6 @@
 const db = require("../../../models");
 const Users = db.users;
+const Agent = db.agent;
 const Joi = require("joi");
 const { statusType, userTypes } = require("./../../enum");
 
@@ -7,6 +8,7 @@ exports.validateCreateUser = (req, res, next) => {
   const user = req.body;
 
   const schema = Joi.object({
+    club_id: Joi.number().allow(null),
     first_name: Joi.string().min(3).max(255).required(),
     last_name: Joi.string().min(3).max(255).required(),
     email: Joi.string().email().required(),
@@ -39,6 +41,7 @@ exports.validateUpdateUser = (req, res, next) => {
 
   const schema = Joi.object({
     id: Joi.string().required(),
+    club_id: Joi.number().min(1).max(32),
     first_name: Joi.string().min(3).max(255).required(),
     last_name: Joi.string().min(3).max(255).required(),
     email: Joi.string().email().required(),
@@ -70,6 +73,13 @@ exports.validateExist = async (req, res, next) => {
     },
   });
 
+  const resultAgentUsername = await Agent.findAll({
+    attributes: ["username"],
+    where: {
+      username: user.username,
+    },
+  });
+
   const resultEmail = await Users.findAll({
     attributes: ["email"],
     where: {
@@ -77,7 +87,7 @@ exports.validateExist = async (req, res, next) => {
     },
   });
 
-  if (resultUsername.length !== 0) {
+  if (resultUsername.length !== 0 || resultAgentUsername.length !== 0) {
     res.status(400).send({ message: "Username is already in use" });
   } else if (resultEmail.length !== 0) {
     res.status(400).send({ message: "Email is already in use" });

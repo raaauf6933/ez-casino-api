@@ -1,6 +1,6 @@
 "use strict";
-const { Model } = require("sequelize");
-module.exports = (sequelize, DataTypes) => {
+const { Model, DataTypes } = require("sequelize");
+module.exports = (sequelize, _DataTypes) => {
   class users extends Model {
     /**
      * Helper method for defining associations.
@@ -13,6 +13,7 @@ module.exports = (sequelize, DataTypes) => {
   }
   users.init(
     {
+      club_id: DataTypes.INTEGER,
       first_name: DataTypes.STRING,
       last_name: DataTypes.STRING,
       contact_number: DataTypes.STRING,
@@ -27,5 +28,6 @@ module.exports = (sequelize, DataTypes) => {
       modelName: "users",
     }
   );
+
   return users;
 };

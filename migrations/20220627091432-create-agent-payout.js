@@ -1,37 +1,36 @@
 "use strict";
-
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("users", {
+    await queryInterface.createTable("agent_payouts", {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      club_id: {
+      agent_id: {
         type: Sequelize.INTEGER,
       },
-      first_name: {
-        type: Sequelize.STRING,
+      payout_batch_id: {
+        type: Sequelize.INTEGER,
       },
-      last_name: {
-        type: Sequelize.STRING,
+      comms_rate: {
+        type: Sequelize.INTEGER,
       },
-      contact_number: {
-        type: Sequelize.STRING,
+      initial_salary: {
+        type: Sequelize.FLOAT,
       },
-      email: {
-        type: Sequelize.STRING,
+      sub_agent_salary: {
+        type: Sequelize.FLOAT,
       },
-      username: {
-        type: Sequelize.STRING,
+      admin_fee: {
+        type: Sequelize.FLOAT,
       },
-      password: {
-        type: Sequelize.STRING,
+      upper_to_be_paid: {
+        type: Sequelize.FLOAT,
       },
-      usertype: {
-        type: Sequelize.STRING,
+      total_salary: {
+        type: Sequelize.FLOAT,
       },
       status: {
         type: Sequelize.STRING,
@@ -47,6 +46,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("users");
+    await queryInterface.dropTable("agent_payouts");
   },
 };

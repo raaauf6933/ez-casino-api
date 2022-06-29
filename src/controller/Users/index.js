@@ -1,38 +1,25 @@
 const db = require("../../../models");
-const _ = require("lodash");
 const bcrypt = require("bcrypt");
+const { returnList } = require("../../common/returnResponse");
+const _ = require("lodash");
 const Users = db.users;
+const Club = db.club;
 
 const getAllUsers = async (_req, res) => {
-  const result = await Users.findAll({});
-  res.send(result);
-};
-
-const getUser = async (req, res) => {
-  const user = req.query;
+  Users.belongsTo(Club, {
+    foreignKey: "club_id",
+  });
 
   try {
-    const result = await Users.findByPk(user.id);
+    const result = await Users.findAll({
+      include: Club,
+    });
 
-    if (result) {
-      res
-        .status(200)
-        .send(
-          _.pick(
-            result,
-            "id",
-            "first_name",
-            "last_name",
-            "contact_number",
-            "email",
-            "username",
-            "usertype",
-            "status"
-          )
-        );
-    } else {
-      throw Error("User not found");
-    }
+    const filterResult = result
+      ? result.map((e) => _.omit(e.toJSON(), ["password"]))
+      : [];
+
+    res.send(returnList(filterResult));
   } catch (error) {
     res.status(400).send({ message: error.message });
   }
@@ -84,6 +71,5 @@ const updateUser = async (req, res) => {
 module.exports = {
   getAllUsers,
   createUser,
-  getUser,
   updateUser,
 };

@@ -1,0 +1,138 @@
+const db = require("../../../models");
+const { userTypes } = require("../../enum");
+const Agents = db.agent;
+const Payout = db.payOutBatch;
+const AgentPayout = db.agentPayout;
+
+const getMyId = async (game_code) => {
+  const result = await Agents.findOne({
+    attributes: ["id", "comms_rate"],
+    where: {
+      game_code,
+    },
+  });
+
+  return result;
+};
+
+const getMyAgents = async (id) => {
+  const result = await Agents.findAll({
+    where: {
+      added_by_id: id,
+      added_by_usertype: userTypes.AGENT,
+    },
+  });
+
+  return result;
+};
+
+const getTotalAgentSalary = (forAgentPayouts) => {
+  this.total = 0;
+  for (const agents of forAgentPayouts) {
+    this.total += agents.total_salary;
+  }
+  return this.total;
+};
+
+const getTotalAdminFee = (forAgentPayouts) => {
+  this.total = 0;
+
+  for (const agents of forAgentPayouts) {
+    this.total += agents.admin_fee;
+  }
+
+  return this.total;
+};
+
+const CreateBatchPayout = async (req, res) => {
+  const { payouts } = req.body;
+  const user = req.user;
+  // console.log(user)
+
+  try {
+    let forAgentPayouts = [];
+
+    for await (const payout of payouts) {
+      const agent = await getMyId(payout.game_id);
+      const result = await getMyAgents(agent.toJSON()?.id);
+      // get its subAgents
+      const subAgents = result ? result.map((e) => e.toJSON()) : [];
+
+      // get subAgent in Payouts
+      const getSubAgentInPayroll = payouts.filter(
+        (e) =>
+          e.game_id ===
+          subAgents.find((agents) => agents.game_code === e.game_id)?.game_code
+      );
+
+      const getMySubAgentSalary = () => {
+        let total = 0;
+        if (getSubAgentInPayroll.length === 0) {
+          return 0;
+        }
+        for (const sub_agents of getSubAgentInPayroll) {
+          const get_agent_comms = subAgents.find(
+            (e) => e.game_code === sub_agents.game_id
+          ).comms_rate;
+          const agent_comms = get_agent_comms / 100;
+          total += parseFloat(sub_agents.commission) * agent_comms * 0.1;
+        }
+        return total;
+      };
+
+      // console.log(e.game_id);
+      const initial_salary =
+        parseFloat(payout.commission).toFixed(2) *
+        (agent.toJSON().comms_rate / 100);
+      const total_salary =
+        parseFloat(payout.commission) * (agent.toJSON().comms_rate / 100) +
+        getMySubAgentSalary();
+
+      let agent_payout = {
+        game_code: payout.game_id,
+        agent_id: agent.toJSON().id,
+        comms_rate: agent.toJSON().comms_rate,
+        initial_salary: parseFloat(initial_salary.toFixed(2)),
+        upper_to_be_paid: parseFloat(
+          parseFloat(initial_salary.toFixed(2)) * 0.1
+        ),
+        sub_agent_salary: parseFloat(getMySubAgentSalary().toFixed(2)),
+        admin_fee: parseFloat(
+          parseFloat(parseFloat(payout.commission) * 0.3).toFixed(2)
+        ),
+        total_salary: parseFloat(total_salary.toFixed(2)),
+        status: "PENDING",
+      };
+
+      forAgentPayouts.push(agent_payout);
+    }
+
+    const total_agent_salary = getTotalAgentSalary(forAgentPayouts).toFixed(2);
+    const total_admin_fee = getTotalAdminFee(forAgentPayouts).toFixed(2);
+
+    const payout_batch = {
+      club_id: user.club_id,
+      total_agent_salary: parseFloat(total_agent_salary),
+      total_admin_fee: parseFloat(total_admin_fee),
+      added_by: user._id,
+      status: "ONGOING",
+    };
+
+    // Create Payout Batch
+    const batchResult = await Payout.create(payout_batch);
+
+    for (const agent of forAgentPayouts) {
+      delete agent.game_code;
+      agent.payout_batch_id = batchResult.toJSON().id;
+    }
+
+    // insert Agent Payouts
+    await AgentPayout.bulkCreate(forAgentPayouts);
+
+    res.send(batchResult.toJSON());
+  } catch (error) {
+    res.status(404).send({ message: error.message });
+  }
+};
+
+module.exports = CreateBatchPayout;
