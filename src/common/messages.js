@@ -1,5 +1,12 @@
+exports.api_error_code = {
+  TOKEN_EXPIRED: "TOKEN_EXPIRED",
+  INVALID_TOKEN: "INVALID_TOKEN",
+};
+
 exports.api_reponse = {
   NO_PERMISSION: "You do not have permissions to this endpoint",
+  TOKEN_EXPIRED: "Token Expired",
+  INVALID_TOKEN: "Invalid Token",
 };
 
 exports.payout_error_code = {

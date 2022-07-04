@@ -1,8 +1,20 @@
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
-exports.generateAuthToken = (data) => {
-  const token = jwt.sign(data, process.env.jwtPrivateKey);
+const tokenKey = process.env.jwtPrivateKey;
+const refreshTokenKey = process.env.REFRESH_TOKEN_KEY;
 
-  return token;
+exports.generateAuthToken = (data) => {
+  const token = jwt.sign(data, tokenKey, {
+    expiresIn: 9400,
+  });
+
+  const crfToken = jwt.sign(data, refreshTokenKey, {
+    expiresIn: 86400,
+  });
+
+  return {
+    token,
+    crfToken,
+  };
 };

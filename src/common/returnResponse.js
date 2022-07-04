@@ -4,3 +4,10 @@ exports.returnList = (result) => {
     data: result,
   };
 };
+
+exports.returnError = (res, status, code, message) => {
+  res.status(status).send({
+    code,
+    message,
+  });
+};

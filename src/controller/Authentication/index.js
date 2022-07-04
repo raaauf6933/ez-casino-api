@@ -32,7 +32,8 @@ const login = async (req, res) => {
       });
 
       res.status(200).send({
-        token,
+        token: token.token,
+        refreshToken: token.crfToken,
       });
     } else {
       const resultAgent = await Agent.findOne({
@@ -59,7 +60,9 @@ const login = async (req, res) => {
         last_name: resultAgent.last_name,
       });
 
-      res.status(200).send({ token });
+      res
+        .status(200)
+        .send({ token: token.token, refreshToken: token.crfToken });
     }
 
     // return if username is not exist
