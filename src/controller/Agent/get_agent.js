@@ -24,6 +24,23 @@ const getAgent = async (req, res) => {
     });
     if (!result) throw Error("Agent not found!");
 
+    const subAgentsResult = await Agent.findAll({
+      attributes: [
+        "id",
+        "game_code",
+        "first_name",
+        "last_name",
+        "username",
+        "email",
+        "contact_number",
+        "status",
+      ],
+      where: {
+        added_by_id: params.id,
+        added_by_usertype: "AGENT",
+      },
+    });
+
     let added_by = {};
 
     const parseResult = await result.toJSON();
@@ -54,7 +71,12 @@ const getAgent = async (req, res) => {
       }`;
     }
 
-    res.send(_.omit({ ...result.toJSON(), added_by }, ["password", "user"]));
+    res.send(
+      _.omit({ ...result.toJSON(), added_by, sub_agents: subAgentsResult }, [
+        "password",
+        "user",
+      ])
+    );
   } catch (error) {
     res.status(400).send({ message: error.message });
   }
