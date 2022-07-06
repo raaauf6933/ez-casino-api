@@ -3,20 +3,20 @@ const { api_reponse, api_error_code } = require("./../../common/messages");
 const { returnError } = require("./../../common/returnResponse");
 require("dotenv").config();
 
-const REFRESH_TOKEN_KEY = process.env.REFRESH_TOKEN_KEY;
+const TOKEN_KEY = process.env.jwtPrivateKey;
 
 const VerifyToken = async (req, res) => {
-  const refresh_token = req.body.refreshToken;
+  const token = req.body.token;
 
-  if (!refresh_token)
+  if (!token)
     return res
       .status(401)
       .send({ message: "Access denied. No token provided." });
 
   try {
-    jwt.verify(refresh_token, REFRESH_TOKEN_KEY);
+    jwt.verify(token, TOKEN_KEY);
 
-    res.send({ refresh_token });
+    res.send({ token });
   } catch (ex) {
     if (ex instanceof jwt.TokenExpiredError) {
       returnError(

@@ -18,6 +18,7 @@ app.get("/", (_req, res) => {
   });
 });
 
+app.use("/dashboard", require("./src/routes/Dashboard"));
 app.use("/users", require("./src/routes/Users"));
 app.use("/auth", require("./src/routes/Authentication"));
 app.use("/club", require("./src/routes/Club"));

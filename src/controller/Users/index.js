@@ -45,18 +45,19 @@ const createUser = async (req, res) => {
 
 const updateUser = async (req, res) => {
   const user = req.body;
+
+  const updatedUser = {
+    ...user,
+    club_id: user.usertype === "SUPER_USER" ? null : user.club_id,
+  };
+
   try {
     // insert data to database table
-    const result = await Users.update(
-      {
-        ...user,
+    const result = await Users.update(updatedUser, {
+      where: {
+        id: user.id,
       },
-      {
-        where: {
-          id: user.id,
-        },
-      }
-    );
+    });
 
     if (result[0] !== 0) {
       res.status(200).send({ message: "Changes saved!" });
