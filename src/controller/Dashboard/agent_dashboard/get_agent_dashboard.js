@@ -5,8 +5,9 @@ const Agent = db.agent;
 
 const getRecentEarning = (payouts) => {
   if (payouts.length !== 0) {
-    return payouts[payouts.length === 1 ? payouts.length : -1].toJson()
-      .total_salary;
+    return payouts.length === 1
+      ? payouts[0].total_salary
+      : payouts[payouts.length - 1].toJson().total_salary;
   } else {
     return 0;
   }
