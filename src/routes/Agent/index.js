@@ -6,6 +6,7 @@ const createAgent = require("./../../controller/Agent/create_agent");
 const getAgent = require("./../../controller/Agent/get_agent");
 const getAgentDashboard = require("../../controller/Dashboard/agent_dashboard/get_agent_dashboard");
 const getAgentPermission = require("../../controller/Dashboard/agent_dashboard/permission");
+const updateAgentStatus = require("../../controller/Agent/update_agent_status");
 const {
   validateCreateAgent,
   validateExist,
@@ -24,5 +25,7 @@ router.post(
   validateExist,
   createAgent
 );
+
+router.post("/update_agent_status", Auth, updateAgentStatus);
 
 module.exports = router;

@@ -8,10 +8,19 @@ const Club = db.club;
 
 const getAgents = async (req, res) => {
   const user = req.user;
+  const params = req.query;
 
   Agent.belongsTo(Club, {
     foreignKey: "club_id",
   });
+
+  const getStatus = () => {
+    if (params.status) {
+      return { status: params.status };
+    } else {
+      return {};
+    }
+  };
 
   const getAgentsParams = () => {
     if (user.usertype === userTypes.AGENT) {
@@ -20,6 +29,7 @@ const getAgents = async (req, res) => {
           club_id: user?.club_id,
           added_by_id: user?._id,
           added_by_usertype: user?.usertype,
+          ...getStatus(),
         },
       };
     } else {
@@ -28,12 +38,17 @@ const getAgents = async (req, res) => {
         return {
           where: {
             club_id: user?.club_id,
+            ...getStatus(),
           },
         };
 
         // SUPER ADMIN
       } else {
-        return;
+        return {
+          where: {
+            ...getStatus(),
+          },
+        };
       }
     }
   };

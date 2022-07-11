@@ -3,7 +3,8 @@ const bcrypt = require("bcrypt");
 const Users = db.users;
 const Agent = db.agent;
 const { generateAuthToken } = require("./../../utils/generateToken");
-const { userTypes } = require("./../../enum");
+const { userTypes, statusType } = require("./../../enum");
+const { exceptions } = require("../../utils/exception");
 
 const login = async (req, res) => {
   const user = req.body;
@@ -20,7 +21,22 @@ const login = async (req, res) => {
         resultUser.password
       );
 
-      if (!validUserPassword) throw Error("Invalid Username or Password");
+      if (!validUserPassword)
+        throw new exceptions(
+          false,
+          "INVALID_USER",
+          "",
+          "Invalid Username or Password"
+        );
+
+      if (resultUser.status !== statusType.ACTIVE) {
+        throw new exceptions(
+          false,
+          "USER_INACTIVE",
+          "",
+          "Account status is In-Active"
+        );
+      }
 
       const token = generateAuthToken({
         _id: resultUser.id,
@@ -41,7 +57,12 @@ const login = async (req, res) => {
       });
 
       if (!resultAgent) {
-        throw Error("Invalid Username or Password");
+        throw new exceptions(
+          false,
+          "INVALID_USER",
+          "",
+          "Invalid Username or Password"
+        );
       }
 
       const validAgentPassword = await bcrypt.compare(
@@ -49,7 +70,35 @@ const login = async (req, res) => {
         resultAgent?.password
       );
 
-      if (!validAgentPassword) throw Error("Invalid Username or Password");
+      if (!validAgentPassword)
+        throw new exceptions(
+          false,
+          "INVALID_USER",
+          "",
+          "Invalid Username or Password"
+        );
+
+      if (
+        [statusType.FOR_APPROVAL, statusType.INACTIVE].includes(
+          resultAgent.status
+        )
+      ) {
+        throw new exceptions(
+          false,
+          "USER_INACTIVE",
+          "",
+          "Account status is either For Approval or In-Active"
+        );
+      }
+
+      if (resultAgent.status === statusType.REJECT) {
+        throw new exceptions(
+          false,
+          "INVALID_USER",
+          "",
+          "Invalid Username or Password"
+        );
+      }
 
       const token = generateAuthToken({
         _id: resultAgent.id,
@@ -67,7 +116,11 @@ const login = async (req, res) => {
 
     // return if username is not exist
   } catch (error) {
-    res.status(404).send(error.message);
+    if (error instanceof exceptions) {
+      res.status(404).send({ code: error.code, message: error.message });
+    } else {
+      res.status(404).send({ message: error.message });
+    }
   }
 };
 
