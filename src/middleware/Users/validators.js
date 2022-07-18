@@ -95,3 +95,20 @@ exports.validateExist = async (req, res, next) => {
     next();
   }
 };
+
+exports.validateChangePassword = (req, res, next) => {
+  const user = req.body;
+
+  const schema = Joi.object({
+    newPassword: Joi.string().min(6).max(255).required(),
+    oldPassword: Joi.string().min(1).max(255).required(),
+  });
+
+  const { error } = schema.validate(user);
+
+  if (error) {
+    res.status(400).send({ message: error.details[0].message });
+  } else {
+    next();
+  }
+};
