@@ -20,6 +20,7 @@ module.exports = (sequelize, DataTypes) => {
       sub_agent_salary: DataTypes.FLOAT,
       admin_fee: DataTypes.FLOAT,
       upper_to_be_paid: DataTypes.FLOAT,
+      deduction: DataTypes.FLOAT,
       total_salary: DataTypes.FLOAT,
       status: DataTypes.STRING,
     },
