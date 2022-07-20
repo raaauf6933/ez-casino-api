@@ -1,5 +1,7 @@
 const db = require("../../../models");
 const { userTypes } = require("../../enum");
+const { exceptions } = require("../../utils/exception");
+const { payout_error_code } = require("./../../common/messages");
 const Agents = db.agent;
 const Payout = db.payOutBatch;
 const AgentPayout = db.agentPayout;
@@ -88,6 +90,15 @@ const CreateBatchPayout = async (req, res) => {
         parseFloat(payout.commission) * (agent.toJSON().comms_rate / 100) +
         getMySubAgentSalary();
 
+      if (total_salary < payout.deduction) {
+        throw new exceptions(
+          false,
+          payout_error_code.INVALID_INPUT,
+          "Unable to process Data",
+          "Computed Total Salary must not be less than deduction"
+        );
+      }
+
       let agent_payout = {
         game_code: payout.game_id,
         agent_id: agent.toJSON().id,
@@ -100,7 +111,7 @@ const CreateBatchPayout = async (req, res) => {
         admin_fee: parseFloat(
           parseFloat(parseFloat(payout.commission) * 0.3).toFixed(2)
         ),
-        total_salary: parseFloat(total_salary.toFixed(2)),
+        total_salary: parseFloat(total_salary.toFixed(2)) - payout.deduction,
         status: "PENDING",
       };
 

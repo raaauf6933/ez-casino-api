@@ -14,4 +14,5 @@ exports.payout_error_code = {
   DUPLICATE: "DUPLICATE",
   DATA_FORMAT: "DATA_FORMAT",
   ID_NOT_FOUND: "ID_NOT_FOUND",
+  INVALID_INPUT: "INVALID_INPUT",
 };

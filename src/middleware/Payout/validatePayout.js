@@ -10,6 +10,7 @@ const { exceptions } = require("../../utils/exception");
 const header = [
   "game_id", //Number
   "commission",
+  "deduction",
 ];
 
 //Error handler
