@@ -111,6 +111,7 @@ const CreateBatchPayout = async (req, res) => {
         admin_fee: parseFloat(
           parseFloat(parseFloat(payout.commission) * 0.3).toFixed(2)
         ),
+        deduction: parseFloat(payout.deduction),
         total_salary: parseFloat(total_salary.toFixed(2)) - payout.deduction,
         status: "PENDING",
       };
@@ -142,7 +143,15 @@ const CreateBatchPayout = async (req, res) => {
 
     res.send(batchResult.toJSON());
   } catch (error) {
-    res.status(404).send({ message: error.message });
+    if (error instanceof exceptions) {
+      res.status(400).send({
+        code: error.code,
+        error: error.error,
+        message: error.message,
+      });
+    } else {
+      res.status(404).send({ message: error.message });
+    }
   }
 };
 
