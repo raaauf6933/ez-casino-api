@@ -9,12 +9,12 @@ exports.validateCreateAgent = (req, res, next) => {
 
   const schema = Joi.object({
     game_code: Joi.string().min(1).max(255).required(),
-    first_name: Joi.string().min(1).max(255).required(),
-    last_name: Joi.string().min(1).max(255).required(),
+    first_name: Joi.string().min(1).max(255).allow(null, ""),
+    last_name: Joi.string().min(1).max(255).allow(null, ""),
     comms_rate: Joi.number().min(50).max(100).required(),
     username: Joi.string().min(6).max(255).required(),
-    email: Joi.string().min(3).max(255).email().required(),
-    contact_number: Joi.string().min(11).max(11).required(),
+    email: Joi.string().min(3).max(255).email().allow(null, ""),
+    contact_number: Joi.string().min(11).max(11).allow(null, ""),
     status: Joi.string()
       .valid(...Object.values(statusType))
       .required(),
