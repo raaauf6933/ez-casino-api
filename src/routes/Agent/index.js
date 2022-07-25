@@ -7,10 +7,12 @@ const getAgent = require("./../../controller/Agent/get_agent");
 const getAgentDashboard = require("../../controller/Dashboard/agent_dashboard/get_agent_dashboard");
 const getAgentPermission = require("../../controller/Dashboard/agent_dashboard/permission");
 const updateAgentStatus = require("../../controller/Agent/update_agent_status");
+const changeUpperAgent = require("../../controller/Agent/change_upper_agent");
 const {
   validateCreateAgent,
   validateExist,
 } = require("../../middleware/Agent/validators");
+const { userTypes } = require("../../enum");
 
 router.get("/get_agents", Auth, getAgents);
 
@@ -27,5 +29,15 @@ router.post(
 );
 
 router.post("/update_agent_status", Auth, updateAgentStatus);
+
+router.post(
+  "/change_upper_agent",
+  function (req, _res, next) {
+    req.usertypes = [userTypes.CLUB_ADMIN];
+    next();
+  },
+  Auth,
+  changeUpperAgent
+);
 
 module.exports = router;
