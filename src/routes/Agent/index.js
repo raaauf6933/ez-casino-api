@@ -8,6 +8,7 @@ const getAgentDashboard = require("../../controller/Dashboard/agent_dashboard/ge
 const getAgentPermission = require("../../controller/Dashboard/agent_dashboard/permission");
 const updateAgentStatus = require("../../controller/Agent/update_agent_status");
 const changeUpperAgent = require("../../controller/Agent/change_upper_agent");
+const UpdateAgent = require("../../controller/Agent/update_agent");
 const {
   validateCreateAgent,
   validateExist,
@@ -38,6 +39,16 @@ router.post(
   },
   Auth,
   changeUpperAgent
+);
+
+router.post(
+  "/update_agent",
+  function (req, _res, next) {
+    req.usertypes = [userTypes.CLUB_ADMIN];
+    next();
+  },
+  Auth,
+  UpdateAgent
 );
 
 module.exports = router;

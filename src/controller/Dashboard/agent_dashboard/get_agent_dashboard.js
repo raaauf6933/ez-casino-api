@@ -7,7 +7,7 @@ const getRecentEarning = (payouts) => {
   if (payouts.length !== 0) {
     return payouts.length === 1
       ? payouts[0].total_salary
-      : payouts[payouts.length - 1].toJson().total_salary;
+      : payouts[payouts.length - 1].total_salary;
   } else {
     return 0;
   }
