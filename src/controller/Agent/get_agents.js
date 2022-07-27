@@ -3,6 +3,7 @@ const _ = require("lodash");
 const { userTypes } = require("./../../enum");
 // const { api_reponse } = require("../../common/messages");
 const { returnList } = require("../../common/returnResponse");
+const { Op } = require("sequelize");
 const Agent = db.agent;
 const Club = db.club;
 
@@ -22,6 +23,18 @@ const getAgents = async (req, res) => {
     }
   };
 
+  const searchId = () => {
+    if (params.search) {
+      return {
+        game_code: {
+          [Op.like]: "%" + params.search + "%",
+        },
+      };
+    } else {
+      return {};
+    }
+  };
+
   const getAgentsParams = () => {
     if (user.usertype === userTypes.AGENT) {
       return {
@@ -29,6 +42,7 @@ const getAgents = async (req, res) => {
           club_id: user?.club_id,
           added_by_id: user?._id,
           added_by_usertype: user?.usertype,
+          ...searchId(),
           ...getStatus(),
         },
       };
@@ -39,6 +53,7 @@ const getAgents = async (req, res) => {
           where: {
             club_id: user?.club_id,
             ...getStatus(),
+            ...searchId(),
           },
         };
 
@@ -46,6 +61,7 @@ const getAgents = async (req, res) => {
       } else {
         return {
           where: {
+            ...searchId(),
             ...getStatus(),
           },
         };
