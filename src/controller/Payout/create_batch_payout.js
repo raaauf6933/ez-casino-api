@@ -86,9 +86,10 @@ const CreateBatchPayout = async (req, res) => {
       const initial_salary =
         parseFloat(payout.commission).toFixed(2) *
         (agent.toJSON().comms_rate / 100);
-      const total_salary =
-        parseFloat(payout.commission) * (agent.toJSON().comms_rate / 100) +
-        getMySubAgentSalary();
+      const admin_fee = parseFloat(
+        parseFloat(parseFloat(payout.commission) * 0.3).toFixed(2)
+      );
+      const total_salary = initial_salary + getMySubAgentSalary();
 
       if (total_salary < payout.deduction) {
         throw new exceptions(
@@ -108,11 +109,9 @@ const CreateBatchPayout = async (req, res) => {
           parseFloat(initial_salary.toFixed(2)) * 0.1
         ),
         sub_agent_salary: parseFloat(getMySubAgentSalary().toFixed(2)),
-        admin_fee: parseFloat(
-          parseFloat(parseFloat(payout.commission) * 0.3).toFixed(2)
-        ),
+        admin_fee: admin_fee,
         deduction: parseFloat(payout.deduction),
-        total_salary: parseFloat(total_salary.toFixed(2)) - payout.deduction,
+        total_salary: parseFloat(total_salary.toFixed(2)) - admin_fee,
         status: "PENDING",
       };
 
