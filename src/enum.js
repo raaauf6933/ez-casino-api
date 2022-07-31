@@ -3,6 +3,7 @@ exports.statusType = Object.freeze({
   INACTIVE: "INACTIVE",
   FOR_APPROVAL: "FOR_APPROVAL",
   REJECT: "REJECT",
+  DELETED: "DELETED",
 });
 
 exports.userTypes = Object.freeze({

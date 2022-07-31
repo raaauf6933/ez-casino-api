@@ -77,7 +77,9 @@ const getAgents = async (req, res) => {
     const result = await Agent.findAll({ ...getAgentsParams(), include: Club });
 
     const filterResult = result
-      ? result.map((e) => _.omit(e.toJSON(), ["password"]))
+      ? result
+          .map((e) => _.omit(e.toJSON(), ["password"]))
+          .filter((e) => e.status !== "DELETED")
       : [];
 
     res.send(returnList(filterResult));

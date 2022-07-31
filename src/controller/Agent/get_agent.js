@@ -1,6 +1,7 @@
 const db = require("../../../models");
 const _ = require("lodash");
 const { api_reponse } = require("../../common/messages");
+const { Op } = require("sequelize");
 const { userTypes } = require("../../enum");
 const Agent = db.agent;
 const Clubs = db.club;
@@ -38,6 +39,9 @@ const getAgent = async (req, res) => {
       where: {
         added_by_id: params.id,
         added_by_usertype: "AGENT",
+        status: {
+          [Op.not]: "DELETED",
+        },
       },
     });
 

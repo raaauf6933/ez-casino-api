@@ -29,7 +29,15 @@ router.post(
   createAgent
 );
 
-router.post("/update_agent_status", Auth, updateAgentStatus);
+router.post(
+  "/update_agent_status",
+  function (req, _res, next) {
+    req.usertypes = [userTypes.CLUB_ADMIN];
+    next();
+  },
+  Auth,
+  updateAgentStatus
+);
 
 router.post(
   "/change_upper_agent",

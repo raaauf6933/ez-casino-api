@@ -32,7 +32,6 @@ const ValidateSubAgents = async (body) => {
     });
 
     if (result !== null) {
-      console.log(result.toJSON());
       return new exceptions(
         false,
         "INVALID_AGENT",

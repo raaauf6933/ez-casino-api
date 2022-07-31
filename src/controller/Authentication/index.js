@@ -91,7 +91,10 @@ const login = async (req, res) => {
         );
       }
 
-      if (resultAgent.status === statusType.REJECT) {
+      if (
+        resultAgent.status === statusType.REJECT ||
+        resultAgent.status === statusType.DELETED
+      ) {
         throw new exceptions(
           false,
           "INVALID_USER",
