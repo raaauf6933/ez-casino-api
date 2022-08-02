@@ -4,12 +4,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: [
-      "localhost:3000",
-      "https://ezcasinoph.club",
-      "https://ez-casino-staging.netlify.app",
-      "ezcasinoph.club",
-    ], // <-- location of the react app
+    origin: "https://ezcasinoph.club", // <-- location of the react app
     credentials: true,
     allowedHeaders: "*",
   })
@@ -19,12 +14,7 @@ app.use(express.json());
 
 app.use(function (req, res, next) {
   // Website you wish to allow to connect
-  res.setHeader("Access-Control-Allow-Origin", [
-    "http://localhost:3000",
-    "https://ezcasinoph.club",
-    "https://ez-casino-staging.netlify.app",
-    "ezcasinoph.club",
-  ]);
+  res.setHeader("Access-Control-Allow-Origin", "https://ezcasinoph.club");
 
   // Request methods you wish to allow
   res.setHeader(
