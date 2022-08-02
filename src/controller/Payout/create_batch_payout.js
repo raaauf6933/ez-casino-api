@@ -134,7 +134,7 @@ const CreateBatchPayout = async (req, res) => {
 
     for (const agent of forAgentPayouts) {
       delete agent.game_code;
-      agent.payout_batch_id = batchResult.toJSON().id;
+      agent.payout_batch_id = batchResult.id;
     }
 
     // insert Agent Payouts
