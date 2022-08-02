@@ -138,7 +138,7 @@ const CreateBatchPayout = async (req, res) => {
     }
 
     // insert Agent Payouts
-    await AgentPayout.bulkCreate(forAgentPayouts);
+    AgentPayout.bulkCreate(forAgentPayouts);
 
     res.send(batchResult.toJSON());
   } catch (error) {
