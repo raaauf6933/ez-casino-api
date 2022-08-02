@@ -130,7 +130,7 @@ const CreateBatchPayout = async (req, res) => {
     };
 
     // Create Payout Batch
-    const batchResult = Payout.create(payout_batch);
+    const batchResult = await Payout.create(payout_batch);
 
     for (const agent of forAgentPayouts) {
       delete agent.game_code;
