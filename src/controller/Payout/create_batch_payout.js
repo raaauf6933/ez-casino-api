@@ -54,7 +54,7 @@ const CreateBatchPayout = async (req, res) => {
   try {
     let forAgentPayouts = [];
 
-    for await (const payout of payouts) {
+    for (const payout of payouts) {
       const agent = await getMyId(payout.game_id);
       const result = await getMyAgents(agent.toJSON()?.id);
       // get its subAgents
@@ -130,7 +130,7 @@ const CreateBatchPayout = async (req, res) => {
     };
 
     // Create Payout Batch
-    const batchResult = await Payout.create(payout_batch);
+    const batchResult = Payout.create(payout_batch);
 
     for (const agent of forAgentPayouts) {
       delete agent.game_code;
