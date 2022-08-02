@@ -111,7 +111,7 @@ const CreateBatchPayout = async (req, res) => {
         sub_agent_salary: parseFloat(getMySubAgentSalary().toFixed(2)),
         admin_fee: admin_fee,
         deduction: parseFloat(payout.deduction),
-        total_salary: parseFloat(total_salary.toFixed(2)) - admin_fee,
+        total_salary: parseFloat(total_salary.toFixed(2)),
         status: "PENDING",
       };
 
