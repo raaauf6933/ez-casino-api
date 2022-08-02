@@ -130,7 +130,7 @@ const CreateBatchPayout = async (req, res) => {
     };
 
     // Create Payout Batch
-    const batchResult = await Payout.create(payout_batch);
+    const batchResult = Payout.create(payout_batch);
 
     for (const agent of forAgentPayouts) {
       delete agent.game_code;
@@ -140,7 +140,7 @@ const CreateBatchPayout = async (req, res) => {
     // insert Agent Payouts
     AgentPayout.bulkCreate(forAgentPayouts);
 
-    res.send(batchResult.toJSON());
+    res.send({ success: true });
   } catch (error) {
     if (error instanceof exceptions) {
       res.status(400).send({
