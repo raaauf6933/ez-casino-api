@@ -96,7 +96,7 @@ const CreateBatchPayout = async (req, res) => {
           false,
           payout_error_code.INVALID_INPUT,
           "Unable to process Data",
-          "Computed Total Salary must not be less than deduction"
+          `${payout.game_id} Computed Total Salary must not be less than deduction`
         );
       }
 
