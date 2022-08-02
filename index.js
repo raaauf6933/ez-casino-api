@@ -4,7 +4,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: "*", // <-- location of the react app
+    origin: ["localhost:3000", "https://ezcasinoph.club"], // <-- location of the react app
     credentials: true,
     allowedHeaders: "*",
   })
