@@ -4,7 +4,7 @@ const { exceptions } = require("../../utils/exception");
 const { payout_error_code } = require("./../../common/messages");
 const Agents = db.agent;
 const Payout = db.payOutBatch;
-const AgentPayout = db.agentPayout;
+// const AgentPayout = db.agentPayout;
 
 const getMyId = async (game_code) => {
   const result = await Agents.findOne({
@@ -138,7 +138,7 @@ const CreateBatchPayout = async (req, res) => {
     }
 
     // insert Agent Payouts
-    AgentPayout.bulkCreate(forAgentPayouts);
+    // AgentPayout.bulkCreate(forAgentPayouts);
 
     res.send({ success: true });
   } catch (error) {
