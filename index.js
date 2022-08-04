@@ -13,12 +13,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 app.use(timeout(180000));
-app.use(function (req, _res, next) {
-  req.setTimeout(500000, function () {
-    // call back function is called when request timed out.
-  });
-  next();
-});
 
 app.get("/", (_req, res) => {
   res.send({
