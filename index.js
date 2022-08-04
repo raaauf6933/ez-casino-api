@@ -29,6 +29,8 @@ app.use("/payout", require("./src/routes/Payout"));
 
 const PORT = process.env.PORT || 8000;
 
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`Server Running here 👉 https://localhost:${PORT}`);
 });
+
+server.setTimeout(500000);
