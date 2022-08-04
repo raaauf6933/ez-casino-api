@@ -46,6 +46,16 @@ const getTotalAdminFee = (forAgentPayouts) => {
   return this.total;
 };
 
+const getTotalCredit = (forAgentPayouts) => {
+  this.total = 0;
+
+  for (const agents of forAgentPayouts) {
+    this.total += agents.deduction;
+  }
+
+  return this.total;
+};
+
 const CreateBatchPayout = async (req, res) => {
   const { payouts } = req.body;
   const user = req.user;
@@ -121,11 +131,14 @@ const CreateBatchPayout = async (req, res) => {
 
     const total_agent_salary = getTotalAgentSalary(forAgentPayouts).toFixed(2);
     const total_admin_fee = getTotalAdminFee(forAgentPayouts).toFixed(2);
+    const total_credit = getTotalCredit(forAgentPayouts).toFixed(2);
 
     const payout_batch = {
       club_id: user.club_id,
       total_agent_salary: parseFloat(total_agent_salary),
       total_admin_fee: parseFloat(total_admin_fee),
+      credit: total_credit,
+      total_salary: parseFloat(total_agent_salary) - parseFloat(total_credit),
       added_by: user._id,
       status: "ONGOING",
     };

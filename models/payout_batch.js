@@ -16,6 +16,8 @@ module.exports = (sequelize, DataTypes) => {
       club_id: DataTypes.INTEGER,
       total_agent_salary: DataTypes.NUMBER,
       total_admin_fee: DataTypes.NUMBER,
+      credit: DataTypes.NUMBER,
+      total_salary: DataTypes.NUMBER,
       added_by: DataTypes.NUMBER,
       status: DataTypes.STRING,
     },
