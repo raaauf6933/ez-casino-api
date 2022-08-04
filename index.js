@@ -1,7 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const app = express();
-
+const timeout = require("connect-timeout"); //express v4
 app.use(
   cors({
     origin: "*", // <-- location of the react app
@@ -11,6 +11,8 @@ app.use(
 );
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+
+app.use(timeout(180000));
 
 app.get("/", (_req, res) => {
   res.send({
