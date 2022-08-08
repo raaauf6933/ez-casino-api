@@ -5,6 +5,8 @@ const { payout_error_code } = require("./../../common/messages");
 const Agents = db.agent;
 const Payout = db.payOutBatch;
 const AgentPayout = db.agentPayout;
+const AgentSubAgentPayout = db.agentSubAgentPayout;
+const _ = require("lodash");
 
 const getMyId = async (game_code) => {
   const result = await Agents.findOne({
@@ -92,7 +94,6 @@ const CreateBatchPayout = async (req, res) => {
         return total;
       };
 
-      // console.log(e.game_id);
       const initial_salary =
         parseFloat(payout.commission).toFixed(2) *
         (agent.toJSON().comms_rate / 100);
@@ -146,16 +147,41 @@ const CreateBatchPayout = async (req, res) => {
     // Create Payout Batch
     const batchResult = await Payout.create(payout_batch);
 
-    console.log(batchResult.toJSON());
     for (const agent of forAgentPayouts) {
       delete agent.game_code;
       agent.payout_batch_id = batchResult.id;
     }
 
     // insert Agent Payouts
-    AgentPayout.bulkCreate(forAgentPayouts).then(() =>
-      console.log("success bulk")
-    );
+    for (const agentPayout of forAgentPayouts) {
+      const agentPayoutResult = await AgentPayout.create(agentPayout);
+      const getMyAgentsResult = await getMyAgents(agentPayout?.agent_id);
+
+      // get its subAgents
+      const subAgents = getMyAgentsResult
+        ? getMyAgentsResult.map((e) => e.id)
+        : [];
+
+      // get subAgent in Payouts
+
+      const getSubAgent = forAgentPayouts.filter((e) =>
+        subAgents.includes(e.agent_id)
+      );
+
+      if (getSubAgent.length !== 0) {
+        for await (const subAgent of getSubAgent) {
+          await AgentSubAgentPayout.create({
+            agent_payout_id: agentPayoutResult.toJSON()?.id,
+            ..._.omit(subAgent, ["payout_batch_id"]),
+          });
+        }
+      }
+    }
+
+    console.log("success bulk");
+    // AgentPayout.bulkCreate(forAgentPayouts).then(() =>
+    //   console.log("success bulk")
+    // );
 
     res.send({ success: true });
   } catch (error) {

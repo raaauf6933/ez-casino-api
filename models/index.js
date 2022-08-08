@@ -54,6 +54,10 @@ db.club = require("./club")(sequelize, Sequelize.DataTypes);
 db.agent = require("./agent")(sequelize, Sequelize.DataTypes);
 db.payOutBatch = require("./payout_batch")(sequelize, Sequelize.DataTypes);
 db.agentPayout = require("./agent_payout")(sequelize, Sequelize.DataTypes);
+db.agentSubAgentPayout = require("./agent_subagent_payout")(
+  sequelize,
+  Sequelize.DataTypes
+);
 
 db.sequelize.sync({ force: false });
 

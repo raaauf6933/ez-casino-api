@@ -2,6 +2,7 @@ const db = require("../../../models");
 const Payout = db.payOutBatch;
 const AgentPayout = db.agentPayout;
 const Agent = db.agent;
+const AgentSubAgentPayout = db.agentSubAgentPayout;
 
 const GetPayoutDetaills = async (req, res) => {
   const { id } = req.query;
@@ -11,6 +12,14 @@ const GetPayoutDetaills = async (req, res) => {
   });
 
   AgentPayout.belongsTo(Agent, {
+    foreignKey: "agent_id",
+  });
+
+  AgentPayout.hasMany(AgentSubAgentPayout, {
+    foreignKey: "agent_payout_id",
+  });
+
+  AgentSubAgentPayout.belongsTo(Agent, {
     foreignKey: "agent_id",
   });
 
@@ -26,6 +35,13 @@ const GetPayoutDetaills = async (req, res) => {
           {
             model: Agent,
             attributes: ["id", "game_code", "first_name", "last_name"],
+          },
+          {
+            model: AgentSubAgentPayout,
+            include: {
+              model: Agent,
+              attributes: ["id", "game_code", "first_name", "last_name"],
+            },
           },
         ],
       },
