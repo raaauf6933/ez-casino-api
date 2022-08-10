@@ -3,6 +3,7 @@ const router = Express.Router();
 
 const Auth = require("../../middleware/auth");
 const GetSuperAdminDashboard = require("../../controller/Dashboard/get_super_admin_dashboard");
+const GetAgentPayout = require("./../../controller/Dashboard/agent_dashboard/get_agent_payout");
 const { userTypes } = require("../../enum");
 
 router.get(
@@ -14,5 +15,7 @@ router.get(
   Auth,
   GetSuperAdminDashboard
 );
+
+router.get("/get_agent_payout", Auth, GetAgentPayout);
 
 module.exports = router;
