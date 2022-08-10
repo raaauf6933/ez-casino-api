@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 const db = require("../../../models");
 const { userTypes } = require("../../enum");
 const { exceptions } = require("../../utils/exception");
@@ -10,7 +11,7 @@ const _ = require("lodash");
 
 const getMyId = async (game_code) => {
   const result = await Agents.findOne({
-    attributes: ["id", "comms_rate"],
+    attributes: ["id", "comms_rate", "added_by_usertype"],
     where: {
       game_code,
     },
@@ -66,9 +67,11 @@ const CreateBatchPayout = async (req, res) => {
   try {
     let forAgentPayouts = [];
 
+    // agent payout proccess
     for (const payout of payouts) {
       const agent = await getMyId(payout.game_id);
-      const result = await getMyAgents(agent.toJSON()?.id);
+      const parseAgent = agent.toJSON();
+      const result = await getMyAgents(parseAgent?.id);
       // get its subAgents
       const subAgents = result ? result.map((e) => e.toJSON()) : [];
 
@@ -85,22 +88,41 @@ const CreateBatchPayout = async (req, res) => {
           return 0;
         }
         for (const sub_agents of getSubAgentInPayroll) {
-          const get_agent_comms = subAgents.find(
+          const get_agent_comms_rate = subAgents.find(
             (e) => e.game_code === sub_agents.game_id
           ).comms_rate;
-          const agent_comms = get_agent_comms / 100;
-          total += parseFloat(sub_agents.commission) * agent_comms * 0.1;
+
+          const sub_agent_comisson = sub_agents.commission;
+          const sub_agent_initial_salary =
+            parseFloat(sub_agent_comisson) * (get_agent_comms_rate / 100);
+          const initial_sub_agent_admin_fee =
+            sub_agent_comisson - sub_agent_initial_salary;
+          const to_be_paid_to_upper = sub_agent_initial_salary * 0.1;
+
+          total += parseFloat(to_be_paid_to_upper);
         }
         return total;
       };
 
+      const my_commisson = payout.commission;
+      // computation of initial salary
       const initial_salary =
-        parseFloat(payout.commission).toFixed(2) *
-        (agent.toJSON().comms_rate / 100);
-      const admin_fee = parseFloat(
-        parseFloat(parseFloat(payout.commission) * 0.3).toFixed(2)
-      );
-      const total_salary = initial_salary + getMySubAgentSalary();
+        parseFloat(my_commisson) * (parseAgent.comms_rate / 100);
+      const sub_agent_salary = getMySubAgentSalary();
+      // console.log(`${payout.game_id}`, sub_agent_salary);
+      const intial_admin_fee = my_commisson - initial_salary;
+      let admin_fee = 0;
+      if (parseAgent.added_by_usertype === "AGENT") {
+        admin_fee = intial_admin_fee - initial_salary * 0.1;
+      } else {
+        admin_fee = intial_admin_fee;
+      }
+
+      let upper_to_be_paid = 0;
+      if (parseAgent.added_by_usertype === "AGENT") {
+        upper_to_be_paid = intial_admin_fee * 0.1;
+      }
+      const total_salary = initial_salary + sub_agent_salary;
 
       if (total_salary < payout.deduction) {
         throw new exceptions(
@@ -116,17 +138,15 @@ const CreateBatchPayout = async (req, res) => {
         agent_id: agent.toJSON().id,
         comms_rate: agent.toJSON().comms_rate,
         initial_salary: parseFloat(initial_salary.toFixed(2)),
-        upper_to_be_paid: parseFloat(
-          parseFloat(initial_salary.toFixed(2)) * 0.1
-        ),
-        sub_agent_salary: parseFloat(getMySubAgentSalary().toFixed(2)),
+        upper_to_be_paid: parseFloat(upper_to_be_paid.toFixed(2)),
+        sub_agent_salary: parseFloat(sub_agent_salary.toFixed(2)),
         admin_fee: admin_fee,
         deduction: parseFloat(payout.deduction),
         total_salary: parseFloat(total_salary.toFixed(2)),
         status: "PENDING",
       };
 
-      console.log(agent_payout.game_code);
+      // console.log(agent_payout.game_code);
       forAgentPayouts.push(agent_payout);
     }
 
