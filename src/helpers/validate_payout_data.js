@@ -45,7 +45,7 @@ const ValidatePayoutData = async (json, user) => {
   // Validate payout data
 
   for await (const data of json) {
-    const { game_id, commission, deduction } = data;
+    const { game_id, commission, deduction, admin_rate } = data;
     const message = new Object();
     message.game_id = game_id;
 
@@ -63,12 +63,12 @@ const ValidatePayoutData = async (json, user) => {
       message.error = "Initial Salary should not be empty and must be a number";
     }
 
-    if (isNaN(commission) || !commission) {
-      message.error = "Initial Salary should not be empty and must be a number";
-    }
-
     if (isNaN(deduction) || !deduction) {
       message.error = "Deduction should not be empty and must be a number";
+    }
+
+    if (isNaN(admin_rate)) {
+      message.error = "Admin rate must be blankk or a number";
     }
 
     if (Object.keys(message).length > 1) {

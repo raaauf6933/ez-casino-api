@@ -11,6 +11,7 @@ const header = [
   "game_id", //Number
   "commission",
   "deduction",
+  "admin_rate",
 ];
 
 //Error handler
