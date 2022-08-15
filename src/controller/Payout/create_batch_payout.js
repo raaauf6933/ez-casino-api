@@ -161,7 +161,7 @@ const CreateBatchPayout = async (req, res) => {
         status: "PENDING",
       };
 
-      // console.log(agent_payout.game_code);
+      console.log(agent_payout.game_code);
       forAgentPayouts.push(agent_payout);
     }
 
