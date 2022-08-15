@@ -220,6 +220,7 @@ const CreateBatchPayout = async (req, res) => {
 
     res.send({ success: true });
   } catch (error) {
+    console.log(error);
     if (error instanceof exceptions) {
       res.status(400).send({
         code: error.code,

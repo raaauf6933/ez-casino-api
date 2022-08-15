@@ -52,6 +52,7 @@ const ValidatePayout = async (req, res, next) => {
       throw Error("No file found");
     }
   } catch (error) {
+    console.log(error);
     if (error instanceof exceptions) {
       return res.status(400).send({
         code: error.code,
