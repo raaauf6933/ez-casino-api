@@ -4,6 +4,9 @@ exports.statusType = Object.freeze({
   FOR_APPROVAL: "FOR_APPROVAL",
   REJECT: "REJECT",
   DELETED: "DELETED",
+  COMPLETED: "COMPLETED",
+  CANCELLED: "CANCELLED",
+  ONGOING: "ONGOING",
 });
 
 exports.userTypes = Object.freeze({

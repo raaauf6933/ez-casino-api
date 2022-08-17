@@ -1,7 +1,10 @@
 const db = require("../../../../models");
 const { returnError } = require("../../../common/returnResponse");
+const { statusType } = require("./../../../enum");
 const AgentPayout = db.agentPayout;
 const Agent = db.agent;
+const AgentPayoutBatch = db.payOutBatch;
+const { COMPLETED } = statusType;
 
 const getRecentEarning = (payouts) => {
   if (payouts.length !== 0) {
@@ -29,6 +32,10 @@ const getTotalEarnings = (payouts) => {
 const GetAgentDashboard = async (req, res) => {
   const agent = req.user;
 
+  AgentPayout.belongsTo(AgentPayoutBatch, {
+    foreignKey: "payout_batch_id",
+  });
+
   try {
     const agentResut = await Agent.findOne({
       where: {
@@ -50,6 +57,13 @@ const GetAgentDashboard = async (req, res) => {
     const result = await AgentPayout.findAll({
       where: {
         agent_id: agent._id,
+      },
+      include: {
+        model: AgentPayoutBatch,
+        attributes: ["id", "status"],
+        where: {
+          status: COMPLETED,
+        },
       },
     });
 

@@ -1,9 +1,12 @@
 const Joi = require("joi");
 const ValidateAgentId = require("./../../../helpers/validate_agent_id");
+const { statusType } = require("./../../../enum");
 const db = require("./../../../../models");
 const Agent = db.agent;
 const AgentPayouts = db.agentPayout;
 const AgentSubAgentPayout = db.agentSubAgentPayout;
+const AgentPayoutBatch = db.payOutBatch;
+const { COMPLETED } = statusType;
 
 const Payloadvalidator = (body) => {
   const formBody = body;
@@ -22,6 +25,10 @@ const Payloadvalidator = (body) => {
 
 const GetAgentPayout = async (req, res) => {
   const body = req.query;
+
+  AgentPayouts.belongsTo(AgentPayoutBatch, {
+    foreignKey: "payout_batch_id",
+  });
 
   AgentPayouts.hasMany(AgentSubAgentPayout, {
     foreignKey: "agent_payout_id",
@@ -42,13 +49,22 @@ const GetAgentPayout = async (req, res) => {
       where: {
         agent_id: body.id,
       },
-      include: {
-        model: AgentSubAgentPayout,
-        include: {
-          model: Agent,
-          attributes: ["id", "game_code", "first_name", "last_name"],
+      include: [
+        {
+          model: AgentSubAgentPayout,
+          include: {
+            model: Agent,
+            attributes: ["id", "game_code", "first_name", "last_name"],
+          },
         },
-      },
+        {
+          model: AgentPayoutBatch,
+          attributes: ["id", "status"],
+          where: {
+            status: COMPLETED,
+          },
+        },
+      ],
     });
 
     res.send(result);

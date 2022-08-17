@@ -1,4 +1,5 @@
 const db = require("../../../../models");
+const { statusType } = require("../../../enum");
 const AgentPayout = db.agentPayout;
 const PayoutBatch = db.payOutBatch;
 const Agents = db.agent;
@@ -53,6 +54,7 @@ const GetClubAgentDashboard = async (req, res) => {
       limit: 1,
       where: {
         club_id: club_admin.club_id,
+        status: statusType.COMPLETED,
       },
       order: [["createdAt", "DESC"]],
     });
