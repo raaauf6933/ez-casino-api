@@ -11,15 +11,15 @@ module.exports = {
     //     after: "total_club_fee",
     //   }
     // );
-    await queryInterface.addColumn(
-      "club_payout_batches", // table name
-      "added_by", // new field name
-      {
-        type: Sequelize.INTEGER,
-        allowNull: true,
-        after: "status",
-      }
-    );
+    // await queryInterface.addColumn(
+    //   "club_payout_batches", // table name
+    //   "added_by", // new field name
+    //   {
+    //     type: Sequelize.INTEGER,
+    //     allowNull: true,
+    //     after: "status",
+    //   }
+    // );
   },
 
   async down(queryInterface, Sequelize) {
