@@ -40,7 +40,9 @@ const getClub = async (req, res) => {
           _.pick(
             result,
             "id",
+            "club_game_id",
             "club_name",
+            "admin_rate",
             "contact_person",
             "mobile_number",
             "email",

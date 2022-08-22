@@ -8,6 +8,8 @@ exports.validateCreateClub = (req, res, next) => {
 
   const schema = Joi.object({
     id: Joi.string().min(1).max(255),
+    admin_rate: Joi.number().min(1).max(10),
+    club_game_id: Joi.number().required(),
     club_name: Joi.string().min(3).max(255).required(),
     contact_person: Joi.string().min(3).max(255).required(),
     mobile_number: Joi.string().min(3).max(11).required(),

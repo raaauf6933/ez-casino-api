@@ -22,7 +22,9 @@ module.exports = (sequelize, DataTypes) => {
   }
   Club.init(
     {
+      club_game_id: DataTypes.INTEGER,
       club_name: DataTypes.STRING,
+      admin_rate: DataTypes.INTEGER,
       contact_person: DataTypes.STRING,
       mobile_number: DataTypes.STRING,
       email: DataTypes.STRING,

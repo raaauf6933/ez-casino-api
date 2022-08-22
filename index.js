@@ -26,6 +26,7 @@ app.use("/auth", require("./src/routes/Authentication"));
 app.use("/club", require("./src/routes/Club"));
 app.use("/agent", require("./src/routes/Agent"));
 app.use("/payout", require("./src/routes/Payout"));
+app.use("/club_payout", require("./src/routes/ClubPayout"));
 
 const PORT = process.env.PORT || 8000;
 
