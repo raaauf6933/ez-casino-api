@@ -7,6 +7,7 @@ const CreateClubPayout = require("./../../controller/ClubPayout/create_club_payo
 const GetClubPayoutBatches = require("./../../controller/ClubPayout/get_club_payout_batches");
 const GetClubPayoutDetails = require("./../../controller/ClubPayout/get_club_payout_details");
 const { userTypes } = require("../../enum");
+const UpdateClubBatchPayout = require("../../controller/ClubPayout/update_club_batch_payout");
 
 router.get(
   "/get_club_payout_batches",
@@ -31,5 +32,15 @@ router.post(
 );
 
 router.get("/get_club_payout_details", Auth, GetClubPayoutDetails);
+
+router.post(
+  "/update_club_batch_payout",
+  function (req, _res, next) {
+    req.usertypes = [userTypes.SUPER_USER];
+    next();
+  },
+  Auth,
+  UpdateClubBatchPayout
+);
 
 module.exports = router;

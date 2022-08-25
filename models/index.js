@@ -63,6 +63,10 @@ db.clubPayoutBatches = require("./club_payout_batches")(
   Sequelize.DataTypes
 );
 db.clubPayouts = require("./club_payouts")(sequelize, Sequelize.DataTypes);
+db.clubSettlement = require("./club_settlement")(
+  sequelize,
+  Sequelize.DataTypes
+);
 
 db.sequelize.sync({ force: false });
 

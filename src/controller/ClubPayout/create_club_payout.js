@@ -3,10 +3,11 @@ const { exceptions } = require("../../utils/exception");
 const Club = db.club;
 const ClubBatchPayout = db.clubPayoutBatches;
 const ClubPayouts = db.clubPayouts;
+const ClubSettlement = db.clubSettlement;
 
 const getClubId = async (club_game_id) => {
   const result = await Club.findOne({
-    attributes: ["id"],
+    attributes: ["id", "admin_rate"],
     where: {
       club_game_id,
     },
@@ -54,8 +55,26 @@ const CreateClubPayout = async (req, res) => {
     }
 
     await ClubPayouts.bulkCreate(forClubPayouts);
-
     console.log("success club payout");
+
+    // Create New Club Settlement
+    let club_settlement = [];
+    for await (let club_data of payouts) {
+      const club = await getClubId(club_data.club_id);
+
+      const new_club_settlement = {
+        club_id: club.toJSON().id,
+        union_fee: parseFloat(
+          club_data.club_earn * (club.toJSON().admin_rate / 100)
+        ),
+        union_rate: club.toJSON().admin_rate,
+        club_earn: parseFloat(club_data.club_earn),
+      };
+
+      club_settlement.push(new_club_settlement);
+    }
+
+    await ClubSettlement.bulkCreate(club_settlement);
 
     res.send({ success: true });
   } catch (error) {

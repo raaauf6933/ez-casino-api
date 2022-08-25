@@ -1,12 +1,30 @@
 const db = require("../../../models");
 const ClubPayouts = db.clubPayouts;
+const ClubPayoutBatches = db.clubPayoutBatches;
+const Club = db.club;
 
 const GetClubPayoutDetails = async (req, res) => {
   const { id } = req.query;
+
+  ClubPayoutBatches.hasMany(ClubPayouts, {
+    foreignKey: "club_payout_batch_id",
+  });
+
+  ClubPayouts.belongsTo(Club, {
+    foreignKey: "club_id",
+  });
+
   try {
-    const result = await ClubPayouts.findAll({
+    const result = await ClubPayoutBatches.findAll({
+      include: {
+        model: ClubPayouts,
+        include: {
+          model: Club,
+          attributes: ["id", "club_game_id", "club_name"],
+        },
+      },
       where: {
-        club_payout_batch_id: id,
+        id,
       },
     });
 
