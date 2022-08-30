@@ -64,6 +64,7 @@ const CreateClubPayout = async (req, res) => {
 
       const new_club_settlement = {
         club_id: club.toJSON().id,
+        club_payout_batch_id: batchResult.id,
         union_fee: parseFloat(
           club_data.club_earn * (club.toJSON().admin_rate / 100)
         ),

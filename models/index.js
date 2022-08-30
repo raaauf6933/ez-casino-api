@@ -67,6 +67,10 @@ db.clubSettlement = require("./club_settlement")(
   sequelize,
   Sequelize.DataTypes
 );
+db.clubCashAdvance = require("./club_cash_advance")(
+  sequelize,
+  Sequelize.DataTypes
+);
 
 db.sequelize.sync({ force: false });
 
