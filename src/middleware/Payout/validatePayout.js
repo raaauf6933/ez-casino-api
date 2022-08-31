@@ -5,6 +5,7 @@ const { api_reponse } = require("../../common/messages");
 const validatePayoutHeaders = require("./../../helpers/validate_payout_headers");
 const validatePayoutData = require("./../../helpers/validate_payout_data");
 const { exceptions } = require("../../utils/exception");
+const UploadAgentPayoutError = require("./../../email-templates/upload-agent-payout-error");
 // const Agents = db.agent;
 
 const header = [
@@ -54,6 +55,14 @@ const ValidatePayout = async (req, res, next) => {
   } catch (error) {
     console.log(error);
     if (error instanceof exceptions) {
+      UploadAgentPayoutError(
+        "Club Admin",
+        error.error,
+        error.code === "HEADERS"
+          ? error.message
+          : JSON.stringify(error.message),
+        user
+      );
       return res.status(400).send({
         code: error.code,
         error: error.error,

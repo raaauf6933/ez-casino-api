@@ -8,6 +8,7 @@ const Payout = db.payOutBatch;
 const AgentPayout = db.agentPayout;
 const AgentSubAgentPayout = db.agentSubAgentPayout;
 const _ = require("lodash");
+const UploadAgentPayoutError = require("../../email-templates/upload-agent-payout-error");
 
 const getMyId = async (game_code) => {
   const result = await Agents.findOne({
@@ -144,7 +145,7 @@ const CreateBatchPayout = async (req, res) => {
           false,
           payout_error_code.INVALID_INPUT,
           "Unable to process Data",
-          `${payout.game_id} Computed Total Salary must not be less than deduction`
+          `Game ID: ${payout.game_id} , Computed Total Salary must not be less than deduction`
         );
       }
 
@@ -222,6 +223,14 @@ const CreateBatchPayout = async (req, res) => {
   } catch (error) {
     console.log(error);
     if (error instanceof exceptions) {
+      UploadAgentPayoutError(
+        "Club Admin",
+        error.error,
+        error.code === "HEADERS"
+          ? error.message
+          : JSON.stringify(error.message),
+        user
+      );
       res.status(400).send({
         code: error.code,
         error: error.error,
