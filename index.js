@@ -2,6 +2,9 @@ const express = require("express");
 const cors = require("cors");
 const app = express();
 const timeout = require("connect-timeout"); //express v4
+
+global.__basedir = __dirname;
+
 app.use(
   cors({
     origin: "*", // <-- location of the react app
@@ -19,6 +22,9 @@ app.get("/", (_req, res) => {
     status: "success",
   });
 });
+
+// startups
+require("./startup/cloudStorage")();
 
 app.use("/dashboard", require("./src/routes/Dashboard"));
 app.use("/users", require("./src/routes/Users"));
