@@ -35,6 +35,7 @@ exports.validateExist = async (req, res, next) => {
   const resultGameCode = await Agent.findAll({
     attributes: ["game_code"],
     where: {
+      club_id: req.user.club_id,
       game_code: agent.game_code,
     },
   });
