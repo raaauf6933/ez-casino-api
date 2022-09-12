@@ -68,6 +68,7 @@ const getAgent = async (req, res) => {
       added_by.name = `${resultUpperAgent.toJSON().first_name} ${
         resultUpperAgent.toJSON().last_name
       }`;
+      added_by.game_id = resultUpperAgent.toJSON().game_code;
     } else {
       added_by.id = result.toJSON().user.id;
       added_by.name = `${result.toJSON().user.first_name} ${
