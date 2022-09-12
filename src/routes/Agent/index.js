@@ -14,6 +14,8 @@ const {
   validateExist,
 } = require("../../middleware/Agent/validators");
 const { userTypes } = require("../../enum");
+const GetAvailableAgents = require("../../controller/Agent/get_available_agents");
+const SingleChangeUpperAgent = require("../../controller/Agent/single_change_upper_agent");
 
 router.get("/get_agents", Auth, getAgents);
 
@@ -57,6 +59,26 @@ router.post(
   },
   Auth,
   UpdateAgent
+);
+
+router.get(
+  "/get_available_agents",
+  function (req, _res, next) {
+    req.usertypes = [userTypes.CLUB_ADMIN];
+    next();
+  },
+  Auth,
+  GetAvailableAgents
+);
+
+router.post(
+  "/single_change_upper_agent",
+  function (req, _res, next) {
+    req.usertypes = [userTypes.CLUB_ADMIN];
+    next();
+  },
+  Auth,
+  SingleChangeUpperAgent
 );
 
 module.exports = router;
