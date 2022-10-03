@@ -99,11 +99,12 @@ const CreateBatchPayout = async (req, res) => {
           const initial_sub_agent_admin_fee =
             sub_agent_comisson - sub_agent_initial_salary;
           let to_be_paid_to_upper = 0;
+
           if (sub_agents.admin_rate) {
             to_be_paid_to_upper =
-              (sub_agents.admin_rate / 100) * sub_agent_initial_salary;
+              (sub_agents.admin_rate / 100) * sub_agent_comisson;
           } else {
-            to_be_paid_to_upper = sub_agent_initial_salary * 0.1;
+            to_be_paid_to_upper = sub_agent_comisson * 0.1;
           }
 
           total += parseFloat(to_be_paid_to_upper);
@@ -118,27 +119,30 @@ const CreateBatchPayout = async (req, res) => {
       const sub_agent_salary = getMySubAgentSalary();
       // console.log(`${payout.game_id}`, sub_agent_salary);
       const intial_admin_fee = my_commisson - initial_salary;
+
+      // upper to be paid computation
+      let upper_to_be_paid = 0;
+      if (parseAgent.added_by_usertype === "AGENT") {
+        if (payout.admin_rate) {
+          upper_to_be_paid = (payout.admin_rate / 100) * my_commisson;
+        } else {
+          upper_to_be_paid = my_commisson * 0.1;
+        }
+      }
+
+      // admin fee computation
       let admin_fee = 0;
       if (parseAgent.added_by_usertype === "AGENT") {
         if (payout.admin_rate) {
-          admin_fee =
-            intial_admin_fee - initial_salary * (payout.admin_rate / 100);
+          admin_fee = intial_admin_fee - upper_to_be_paid;
         } else {
-          admin_fee = intial_admin_fee - initial_salary * 0.1;
+          admin_fee = intial_admin_fee - upper_to_be_paid;
         }
       } else {
         admin_fee = intial_admin_fee;
       }
 
-      let upper_to_be_paid = 0;
-      if (parseAgent.added_by_usertype === "AGENT") {
-        if (payout.admin_rate) {
-          upper_to_be_paid = (payout.admin_rate / 100) * intial_admin_fee;
-        } else {
-          upper_to_be_paid = intial_admin_fee * 0.1;
-        }
-      }
-      const total_salary = initial_salary + sub_agent_salary;
+      let total_salary = initial_salary + sub_agent_salary;
 
       if (total_salary < payout.deduction) {
         throw new exceptions(
@@ -148,6 +152,9 @@ const CreateBatchPayout = async (req, res) => {
           `Game ID: ${payout.game_id} , Computed Total Salary must not be less than deduction`
         );
       }
+
+      // minus deduction
+      total_salary = total_salary - payout.deduction;
 
       let agent_payout = {
         game_code: payout.game_id,

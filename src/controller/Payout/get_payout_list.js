@@ -49,7 +49,7 @@ const GetPayoutList = async (req, res) => {
           club_id: user.club_id,
         },
       });
-      const payouts = result.map((e) => e.toJSON());
+      const payouts = result.map((e) => e.toJSON()).reverse();
 
       res.send(returnList(payouts));
     }
