@@ -15,6 +15,7 @@ module.exports = (sequelize, DataTypes) => {
     {
       club_id: DataTypes.INTEGER,
       total_agent_salary: DataTypes.NUMBER,
+      total_union_fee: DataTypes.FLOAT,
       total_admin_fee: DataTypes.NUMBER,
       credit: DataTypes.NUMBER,
       total_salary: DataTypes.NUMBER,

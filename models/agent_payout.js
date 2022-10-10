@@ -15,9 +15,11 @@ module.exports = (sequelize, DataTypes) => {
     {
       agent_id: DataTypes.INTEGER,
       payout_batch_id: DataTypes.INTEGER,
+      commission: DataTypes.FLOAT,
       comms_rate: DataTypes.INTEGER,
       initial_salary: DataTypes.FLOAT,
       sub_agent_salary: DataTypes.FLOAT,
+      union_fee: DataTypes.FLOAT,
       admin_fee: DataTypes.FLOAT,
       upper_to_be_paid: DataTypes.FLOAT,
       deduction: DataTypes.FLOAT,

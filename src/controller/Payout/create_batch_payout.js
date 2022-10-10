@@ -40,6 +40,14 @@ const getTotalAgentSalary = (forAgentPayouts) => {
   return this.total;
 };
 
+const getTotalUnionFee = (forAgentPayouts) => {
+  this.total = 0;
+  for (const agents of forAgentPayouts) {
+    this.total += agents.union_fee;
+  }
+  return this.total;
+};
+
 const getTotalAdminFee = (forAgentPayouts) => {
   this.total = 0;
 
@@ -89,15 +97,15 @@ const CreateBatchPayout = async (req, res) => {
           return 0;
         }
         for (const sub_agents of getSubAgentInPayroll) {
-          const get_agent_comms_rate = subAgents.find(
-            (e) => e.game_code === sub_agents.game_id
-          ).comms_rate;
+          // const get_agent_comms_rate = subAgents.find(
+          //   (e) => e.game_code === sub_agents.game_id
+          // ).comms_rate;
 
           const sub_agent_comisson = sub_agents.commission;
-          const sub_agent_initial_salary =
-            parseFloat(sub_agent_comisson) * (get_agent_comms_rate / 100);
-          const initial_sub_agent_admin_fee =
-            sub_agent_comisson - sub_agent_initial_salary;
+          // const sub_agent_initial_salary =
+          //   parseFloat(sub_agent_comisson) * (get_agent_comms_rate / 100);
+          // const initial_sub_agent_admin_fee =
+          //   sub_agent_comisson - sub_agent_initial_salary;
           let to_be_paid_to_upper = 0;
 
           if (sub_agents.admin_rate) {
@@ -118,7 +126,7 @@ const CreateBatchPayout = async (req, res) => {
         parseFloat(my_commisson) * (parseAgent.comms_rate / 100);
       const sub_agent_salary = getMySubAgentSalary();
       // console.log(`${payout.game_id}`, sub_agent_salary);
-      const intial_admin_fee = my_commisson - initial_salary;
+      // const intial_admin_fee = my_commisson - initial_salary;
 
       // upper to be paid computation
       let upper_to_be_paid = 0;
@@ -130,16 +138,25 @@ const CreateBatchPayout = async (req, res) => {
         }
       }
 
+      let union_fee = 0;
+      union_fee = my_commisson * 0.105;
+
       // admin fee computation
       let admin_fee = 0;
       if (parseAgent.added_by_usertype === "AGENT") {
         if (payout.admin_rate) {
-          admin_fee = intial_admin_fee - upper_to_be_paid;
+          admin_fee =
+            my_commisson - initial_salary - upper_to_be_paid - union_fee;
+          // admin_fee = intial_admin_fee - upper_to_be_paid;
         } else {
-          admin_fee = intial_admin_fee - upper_to_be_paid;
+          admin_fee =
+            my_commisson - initial_salary - upper_to_be_paid - union_fee;
+          // admin_fee = intial_admin_fee - upper_to_be_paid;
         }
       } else {
-        admin_fee = intial_admin_fee;
+        admin_fee =
+          my_commisson - initial_salary - upper_to_be_paid - union_fee;
+        // admin_fee = intial_admin_fee;
       }
 
       let total_salary = initial_salary + sub_agent_salary;
@@ -159,6 +176,7 @@ const CreateBatchPayout = async (req, res) => {
       let agent_payout = {
         game_code: payout.game_id,
         agent_id: agent.toJSON().id,
+        commission: payout.commission,
         comms_rate: agent.toJSON().comms_rate,
         initial_salary: parseFloat(initial_salary.toFixed(2)),
         upper_to_be_paid: parseFloat(upper_to_be_paid.toFixed(2)),
@@ -166,6 +184,7 @@ const CreateBatchPayout = async (req, res) => {
         admin_fee: admin_fee,
         deduction: parseFloat(payout.deduction),
         total_salary: parseFloat(total_salary.toFixed(2)),
+        union_fee: union_fee,
         status: "PENDING",
       };
 
@@ -174,12 +193,14 @@ const CreateBatchPayout = async (req, res) => {
     }
 
     const total_agent_salary = getTotalAgentSalary(forAgentPayouts).toFixed(2);
+    const total_union_fee = getTotalUnionFee(forAgentPayouts).toFixed(2);
     const total_admin_fee = getTotalAdminFee(forAgentPayouts).toFixed(2);
     const total_credit = getTotalCredit(forAgentPayouts).toFixed(2);
 
     const payout_batch = {
       club_id: user.club_id,
       total_agent_salary: parseFloat(total_agent_salary),
+      total_union_fee: parseFloat(total_union_fee),
       total_admin_fee: parseFloat(total_admin_fee),
       credit: total_credit,
       total_salary: parseFloat(total_agent_salary) - parseFloat(total_credit),
